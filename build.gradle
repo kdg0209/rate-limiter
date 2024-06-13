@@ -1,0 +1,43 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.0'
+	id 'io.spring.dependency-management' version '1.1.5'
+}
+
+//bootJar.enabled = false // 빌드시 현재 모듈의 .jar를 생성하지 않습니다.
+
+allprojects {
+
+	group = 'com.rate.limiter'
+	version = '0.0.1-SNAPSHOT'
+	sourceCompatibility = '17'
+
+	repositories {
+		mavenCentral()
+	}
+}
+
+subprojects {
+
+	apply plugin: 'java'
+	apply plugin: 'org.springframework.boot'
+	apply plugin: 'io.spring.dependency-management'
+
+	dependencies {
+
+		compileOnly 'org.projectlombok:lombok'
+		annotationProcessor 'org.projectlombok:lombok'
+	}
+
+	tasks.named('bootJar') { //빌드할 때 bootjar 파일로 하겠다는 의미
+		enabled = false
+	}
+
+	tasks.named('jar') { //빌드할 때 jar 파일로 하겠다는 의미
+		enabled = true
+	}
+
+	tasks.named('test') {
+		useJUnitPlatform()
+	}
+}
