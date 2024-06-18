@@ -9,17 +9,17 @@ import com.rate.limiter.infrastructure.ratelimiter.service.RateLimiter;
 import com.rate.limiter.infrastructure.ratelimiter.service.RateLimiterFactory;
 
 @Configuration
-public class RouteConfig {
+public class FilterConfig {
 
 	private final RateLimiterFactory rateLimiterFactory;
 
-	public RouteConfig(RateLimiter rateLimiter) {
+	public FilterConfig(RateLimiter rateLimiter) {
 		this.rateLimiterFactory = new RateLimiterFactory(rateLimiter);
 	}
 
 	@Bean
 	public RouteLocator gatewayRoutes(RouteLocatorBuilder builder) {
-		RateLimiterFactory.Config config = new RateLimiterFactory.Config();
+		var config = new RateLimiterFactory.Config();
 		return builder.routes()
 			.route(router -> router.path("/api/products/**")
 				.filters(f -> f.filter(rateLimiterFactory.apply(config)))
