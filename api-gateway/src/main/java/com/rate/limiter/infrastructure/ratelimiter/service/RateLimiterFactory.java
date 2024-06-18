@@ -23,22 +23,22 @@ public class RateLimiterFactory extends AbstractGatewayFilterFactory<RateLimiter
 	@Override
 	public GatewayFilter apply(Config config) {
 		return (ServerWebExchange exchange, GatewayFilterChain chain) -> {
+			var productId = extractProductId(exchange);
 			var ipAddress = extractIpAddress(exchange);
-			return rateLimiter.isAllowed(ipAddress)
+
+			return rateLimiter.isAllowed(productId)
 				.flatMap(response -> {
 					log.debug("response={}", response);
-					if (!response.isAllowed()) {
-						return rateLimiter.increaseRequestCount(ipAddress)
-							.flatMap(overRequestCount -> {
-								if (isOverMaxCount(overRequestCount)) {
-									//
-								}
-								return Mono.error(new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS));
-							});
+					if (!response.allowed()) {
+						return Mono.error(new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS));
 					}
 					return chain.filter(exchange);
 				});
 		};
+	}
+
+	private Long extractProductId(ServerWebExchange exchange) {
+		return Long.valueOf(exchange.getRequest().getQueryParams().getFirst("productId"));
 	}
 
 	private String extractIpAddress(ServerWebExchange exchange) {
