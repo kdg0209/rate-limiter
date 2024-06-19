@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
@@ -51,9 +50,8 @@ public class RateLimiterFactory extends AbstractGatewayFilterFactory<RateLimiter
 		return Boolean.TRUE.equals(isTrue);
 	}
 
-	@Getter
+
 	public static class Config {
 
-		int statusCode;
 	}
 }

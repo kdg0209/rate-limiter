@@ -27,6 +27,8 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public final class SlidingWindowRateLimiter implements RateLimiter{
 
+	private static final String SORTED_SET_MIN_VALUE = "0";
+
 	// lua script
 	private static final String SLIDING_WINDOW_LUA_SCRIPT = "sliding-window.lua";
 
@@ -40,7 +42,7 @@ public final class SlidingWindowRateLimiter implements RateLimiter{
 	private final RedisScript<Long> script = new DefaultRedisScript<>(getLuaScript(), Long.class);
 
 	/**
-	 * 해당 메서드는 제공된 키(ipAddress)를 기반으로 요청이 허용되는지 여부를 확인하고 RateResponse를 반환합니다.
+	 * 해당 메서드는 제공된 키(상품 번호)를 기반으로 요청이 허용되는지 여부를 확인하고 RateResponse를 반환합니다.
 	 * 1초당 최대 접근 가능한 횟수는 5회입니다.
 	 */
 	@Override
@@ -67,14 +69,14 @@ public final class SlidingWindowRateLimiter implements RateLimiter{
 	private List<String> settingArgs() {
 		var currentTimeMillis = Instant.now().toEpochMilli();
 		var windowSizeInMillis = Config.EXPIRE_TIME_MS;
-		var expireTime = Config.EXPIRE_TIME_MS / 1000; // 1ms
+		var ttl = Config.EXPIRE_TIME_MS / 1000; // 1ms
 
 		return Arrays.asList(
-			"0.0", // min
-			String.valueOf(currentTimeMillis - windowSizeInMillis), // max
-			String.valueOf(currentTimeMillis), //
-			String.valueOf(currentTimeMillis), //
-			String.valueOf(expireTime) // 만료 시간
+			SORTED_SET_MIN_VALUE, // ARGV[1]: min
+			String.valueOf(currentTimeMillis - windowSizeInMillis), // ARGV[2]: max
+			String.valueOf(currentTimeMillis), // ARGV[3]: score
+			String.valueOf(currentTimeMillis), // ARGV[4]: value
+			String.valueOf(ttl) // ARGV[5]: ttl
 		);
 	}
 
