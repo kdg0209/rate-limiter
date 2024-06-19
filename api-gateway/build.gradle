@@ -11,6 +11,7 @@ dependencies {
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'io.projectreactor:reactor-test'
     implementation 'it.ozimov:embedded-redis:0.7.2'
 }
 
