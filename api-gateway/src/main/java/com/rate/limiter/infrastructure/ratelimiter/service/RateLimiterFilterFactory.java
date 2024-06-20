@@ -3,10 +3,10 @@ package com.rate.limiter.infrastructure.ratelimiter.service;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
+
+import com.rate.limiter.infrastructure.ratelimiter.exception.RateLimitException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class RateLimiterFactory extends AbstractGatewayFilterFactory<RateLimiterFactory.Config> {
+public class RateLimiterFilterFactory extends AbstractGatewayFilterFactory<RateLimiterFilterFactory.Config> {
 
 	private final RateLimiter rateLimiter;
 
@@ -27,9 +27,10 @@ public class RateLimiterFactory extends AbstractGatewayFilterFactory<RateLimiter
 
 			return rateLimiter.isAllowed(productId)
 				.flatMap(response -> {
-					log.debug("response={}", response);
+					log.info("response={}", response);
 					if (!response.allowed()) {
-						return Mono.error(new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS));
+						var rateLimitException = new RateLimitException(response.allowed(), response.remainingCount());
+						return Mono.error(rateLimitException);
 					}
 					return chain.filter(exchange);
 				});

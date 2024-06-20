@@ -33,7 +33,7 @@ public final class SlidingWindowRateLimiter implements RateLimiter{
 	private static final String SLIDING_WINDOW_LUA_SCRIPT = "sliding-window.lua";
 
 	// 남은 요청 수
-	private static final String REMAINING_HEADER = " x-ratelimit-remaining";
+	private static final String REMAINING_HEADER = " X-RateLimit-Remaining";
 
 	// 초당 몇개를 허용하는지 개수
 	private static final String REPLENISH_RATE_HEADER = "X-RateLimit-Replenish-Rate";
@@ -56,8 +56,8 @@ public final class SlidingWindowRateLimiter implements RateLimiter{
 				var allowed = count <= Config.MAX_REQUESTS;   		// 허용 가능 여부
 				var remainingCount = Config.MAX_REQUESTS - count; 	// 남은 횟수
 
-				log.info("allowed:{}, remainingCount={}", allowed, remainingCount);
-				return new RateResponse(allowed, count, getHeaders(remainingCount));
+				log.info("allowed:{}, count={}, remainingCount={}", allowed, count, remainingCount);
+				return new RateResponse(allowed, remainingCount, getHeaders(remainingCount));
 			})
 			.defaultIfEmpty(RateResponse.access());
 	}
