@@ -29,7 +29,7 @@ public class RateLimiterFilterFactory extends AbstractGatewayFilterFactory<RateL
 				.flatMap(response -> {
 					log.info("response={}", response);
 					if (!response.allowed()) {
-						var rateLimitException = new RateLimitException(response.allowed(), response.remainingCount());
+						var rateLimitException = new RateLimitException(response.remainingCount());
 						return Mono.error(rateLimitException);
 					}
 					return chain.filter(exchange);

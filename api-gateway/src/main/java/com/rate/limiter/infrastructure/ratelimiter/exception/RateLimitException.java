@@ -5,11 +5,10 @@ import lombok.Getter;
 @Getter
 public class RateLimitException extends RuntimeException {
 
-	private final boolean allowed;
+	private static final boolean allowed = false;
 	private final long remainingCount;
 
-	public RateLimitException(boolean allowed, long remainingCount) {
-		this.allowed = allowed;
+	public RateLimitException(long remainingCount) {
 		this.remainingCount = remainingCount;
 	}
 }

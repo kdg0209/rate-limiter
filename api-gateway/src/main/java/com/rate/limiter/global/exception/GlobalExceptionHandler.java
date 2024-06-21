@@ -51,7 +51,7 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
 		var result = "";
 
 		try {
-			var errorResponse = new RateLimiterErrorResponse(exception.isAllowed(), exception.getRemainingCount(), "");
+			var errorResponse = new RateLimiterErrorResponse(false, exception.getRemainingCount(), "");
 			result = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(errorResponse);
 		} catch (JsonProcessingException e) {
 			log.error("error message:{}", e.getMessage());
