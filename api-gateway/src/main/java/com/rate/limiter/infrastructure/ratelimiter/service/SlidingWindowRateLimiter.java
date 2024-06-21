@@ -25,7 +25,7 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public final class SlidingWindowRateLimiter implements RateLimiter{
+public final class SlidingWindowRateLimiter implements RateLimiter {
 
 	private static final String SORTED_SET_MIN_VALUE = "0";
 

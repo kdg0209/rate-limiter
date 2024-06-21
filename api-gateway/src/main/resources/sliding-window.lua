@@ -8,10 +8,11 @@ local ttl = ARGV[5]
 redis.call('ZREMRANGEBYSCORE', key, min, max)
 redis.call('ZADD', key, score, value)
 redis.call('EXPIRE', key, ttl)
+local cardinality = redis.call('ZCARD', KEYS[1])
 
 redis.log(redis.LOG_WARNING, "ZREMRANGEBYSCORE command key:", key, ", min:", min, ", max:", max)
 redis.log(redis.LOG_WARNING, "ZADD command key:", key, ", score:", score, ", value:", value)
 redis.log(redis.LOG_WARNING, "EXPIRE command key:", key, ", ttl:", ttl)
-redis.log(redis.LOG_WARNING, "ZCARD command key:", key, ", cardinality", redis.call('ZCARD', KEYS[1]))
+redis.log(redis.LOG_WARNING, "ZCARD command key:", key, ", cardinality", cardinality)
 
-return redis.call('ZCARD', key)
+return cardinality
